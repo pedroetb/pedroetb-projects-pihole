@@ -1,0 +1,73 @@
+version: '3.7'
+
+services:
+  pihole:
+    image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
+    environment:
+      TZ:
+      WEBPASSWORD:
+      DNS1:
+      DNS2:
+      VIRTUAL_HOST: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
+      ServerIP:
+    networks:
+      traefik-net:
+    ports:
+      - target: 53
+        published: 53
+        protocol: tcp
+        mode: ${PORT_MODE}
+      - target: 53
+        published: 53
+        protocol: udp
+        mode: ${PORT_MODE}
+    hostname: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
+    extra_hosts:
+      - ${TRAEFIK_DOMAIN}:${ServerIP}
+      - backup.${TRAEFIK_DOMAIN}:${ServerIP}
+      - motion.${TRAEFIK_DOMAIN}:${ServerIP}
+      - portainer.${TRAEFIK_DOMAIN}:${ServerIP}
+      - seafile.${TRAEFIK_DOMAIN}:${ServerIP}
+      - tajinaste.${TRAEFIK_DOMAIN}:${ServerIP}
+      - traefik.${TRAEFIK_DOMAIN}:${ServerIP}
+      - transmission.${TRAEFIK_DOMAIN}:${ServerIP}
+      - tts.${TRAEFIK_DOMAIN}:${ServerIP}
+    dns:
+      - 127.0.0.1
+      - ${DNS1}
+      - ${DNS2}
+    volumes:
+      - pihole-vol:/etc/pihole
+      - dnsmasqd-vol:/etc/dnsmasq.d
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}
+      labels:
+        traefik.frontend.rule: Host:${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
+        traefik.backend: pihole
+        traefik.port: '80'
+      restart_policy:
+        delay: ${RESTART_POLICY_DELAY:-3s}
+        window: ${RESTART_POLICY_WINDOW:-30s}
+      placement:
+        constraints:
+          - ${PLACEMENT_CONSTRAINT:-node.hostname == node}
+      resources:
+        limits:
+          cpus: '${RESOURCES_LIMITS_CPUS:-0.5}'
+          memory: ${RESOURCES_LIMITS_MEMORY:-128M}
+        reservations:
+          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-32M}
+
+networks:
+  traefik-net:
+    name: ${TRAEFIK_NET_NAME:-traefik-net}
+    external: true
+
+volumes:
+  pihole-vol:
+    name: ${PIHOLE_VOL_NAME:-pihole-vol}
+
+  dnsmasqd-vol:
+    name: ${DNSMASQD_VOL_NAME:-dnsmasqd-vol}
