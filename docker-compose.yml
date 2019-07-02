@@ -8,8 +8,8 @@ services:
       WEBPASSWORD:
       DNS1:
       DNS2:
+      DNSMASQ_LISTENING:
       VIRTUAL_HOST: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
-      ServerIP:
     networks:
       traefik-net:
     ports:
@@ -21,17 +21,18 @@ services:
         published: 53
         protocol: udp
         mode: ${PORT_MODE}
-    hostname: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
+    hostname: ${TRAEFIK_SUBDOMAIN}{{.Task.Slot}}.${TRAEFIK_DOMAIN}
     extra_hosts:
-      - ${TRAEFIK_DOMAIN}:${ServerIP}
-      - backup.${TRAEFIK_DOMAIN}:${ServerIP}
-      - motion.${TRAEFIK_DOMAIN}:${ServerIP}
-      - portainer.${TRAEFIK_DOMAIN}:${ServerIP}
-      - seafile.${TRAEFIK_DOMAIN}:${ServerIP}
-      - tajinaste.${TRAEFIK_DOMAIN}:${ServerIP}
-      - traefik.${TRAEFIK_DOMAIN}:${ServerIP}
-      - transmission.${TRAEFIK_DOMAIN}:${ServerIP}
-      - tts.${TRAEFIK_DOMAIN}:${ServerIP}
+      - ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - ${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - backup.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - motion.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - portainer.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - seafile.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - tajinaste.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - traefik.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - transmission.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - tts.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
     dns:
       - 127.0.0.1
       - ${DNS1}
@@ -41,17 +42,19 @@ services:
       - dnsmasqd-vol:/etc/dnsmasq.d
     deploy:
       mode: replicated
-      replicas: ${REPLICAS:-1}
-      labels:
-        traefik.frontend.rule: Host:${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
-        traefik.backend: pihole
-        traefik.port: '80'
+      replicas: ${REPLICAS:-2}
       restart_policy:
-        delay: ${RESTART_POLICY_DELAY:-3s}
-        window: ${RESTART_POLICY_WINDOW:-30s}
+        delay: ${RESTART_DELAY:-3s}
+      update_config:
+        delay: ${UPDATE_DELAY:-1m}
       placement:
-        constraints:
-          - ${PLACEMENT_CONSTRAINT:-node.hostname == node}
+        preferences:
+          - spread: ${PLACEMENT_PREFERENCE_VALUE:-node.labels.dns}
+      labels:
+        traefik.frontend.rule: Host:${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN};AddPrefix:/admin
+        traefik.backend: pihole
+        traefik.backend.loadbalancer.stickiness: 'true'
+        traefik.port: '80'
       resources:
         limits:
           cpus: '${RESOURCES_LIMITS_CPUS:-0.5}'
@@ -68,6 +71,16 @@ networks:
 volumes:
   pihole-vol:
     name: ${PIHOLE_VOL_NAME:-pihole-vol}
+    driver: local
+    driver_opts:
+      type: ${VOL_TYPE}
+      o: addr=${VOL_ADDRESS},${VOL_OPTIONS}
+      device: ${PIHOLE_VOL_DEVICE}
 
   dnsmasqd-vol:
     name: ${DNSMASQD_VOL_NAME:-dnsmasqd-vol}
+    driver: local
+    driver_opts:
+      type: ${VOL_TYPE}
+      o: addr=${VOL_ADDRESS},${VOL_OPTIONS}
+      device: ${DNSMASQD_VOL_DEVICE}
