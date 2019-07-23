@@ -33,6 +33,7 @@ services:
       - traefik.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - transmission.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - tts.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - mulo.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
     dns:
       - 127.0.0.1
       - ${DNS1}
@@ -57,7 +58,7 @@ services:
         traefik.port: '80'
       resources:
         limits:
-          cpus: '${RESOURCES_LIMITS_CPUS:-0.5}'
+          cpus: '${RESOURCES_LIMITS_CPUS:-1}'
           memory: ${RESOURCES_LIMITS_MEMORY:-128M}
         reservations:
           cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
