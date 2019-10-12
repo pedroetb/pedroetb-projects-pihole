@@ -13,12 +13,12 @@ services:
     networks:
       traefik-net:
     ports:
-      - target: 53
-        published: 53
+      - target: ${DNS_INTERNAL_PORT}
+        published: ${DNS_PORT}
         protocol: tcp
         mode: ${PORT_MODE}
-      - target: 53
-        published: 53
+      - target: ${DNS_INTERNAL_PORT}
+        published: ${DNS_PORT}
         protocol: udp
         mode: ${PORT_MODE}
     hostname: ${TRAEFIK_SUBDOMAIN}{{.Task.Slot}}.${TRAEFIK_DOMAIN}
@@ -52,10 +52,13 @@ services:
         preferences:
           - spread: ${PLACEMENT_PREFERENCE_VALUE:-node.labels.dns}
       labels:
-        traefik.frontend.rule: Host:${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN};AddPrefix:/admin
-        traefik.backend: pihole
-        traefik.backend.loadbalancer.stickiness: 'true'
-        traefik.port: '80'
+        traefik.http.routers.pihole.entrypoints: ${TRAEFIK_ENTRYPOINT:-https}
+        traefik.http.routers.pihole.tls.certresolver: ${TRAEFIK_CERTRESOLVER:-default}
+        traefik.http.routers.pihole.rule: Host(`${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}`)
+        traefik.http.middlewares.pihole-prefix.addprefix.prefix: ${DASHBOARD_PREFIX:-/admin}
+        traefik.http.routers.pihole.middlewares: pihole-prefix
+        traefik.http.services.pihole.loadbalancer.server.port: ${DASHBOARD_PORT:-80}
+        traefik.http.services.pihole.loadbalancer.sticky.cookie.name: ${TRAEFIK_COOKIE_NAME:-sticky}
       resources:
         limits:
           cpus: '${RESOURCES_LIMITS_CPUS:-1}'
@@ -76,7 +79,7 @@ volumes:
     driver_opts:
       type: ${VOL_TYPE}
       o: addr=${VOL_ADDRESS},${VOL_OPTIONS}
-      device: ${PIHOLE_VOL_DEVICE}
+      device: ${PIHOLE_VOL_DEVICE:-:/pihole-vol/}
 
   dnsmasqd-vol:
     name: ${DNSMASQD_VOL_NAME:-dnsmasqd-vol}
@@ -84,4 +87,4 @@ volumes:
     driver_opts:
       type: ${VOL_TYPE}
       o: addr=${VOL_ADDRESS},${VOL_OPTIONS}
-      device: ${DNSMASQD_VOL_DEVICE}
+      device: ${DNSMASQD_VOL_DEVICE:-:/dnsmasqd-vol/}
