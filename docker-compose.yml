@@ -34,6 +34,7 @@ services:
       - transmission.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - tts.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - mulo.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - prometheus.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
     dns:
       - 127.0.0.1
       - ${DNS1}
