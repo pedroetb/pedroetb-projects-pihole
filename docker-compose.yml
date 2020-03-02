@@ -56,6 +56,7 @@ services:
         constraints:
           - ${PLACEMENT_CONSTRAINT:-node.labels.dns == 1}
       labels:
+        traefik.enable: 'true'
         traefik.http.routers.pihole.entrypoints: ${TRAEFIK_ENTRYPOINT:-https}
         traefik.http.routers.pihole.tls.certresolver: ${TRAEFIK_CERTRESOLVER:-default}
         traefik.http.routers.pihole.rule: Host(`${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}`)
@@ -74,6 +75,7 @@ services:
 networks:
   traefik-net:
     name: ${TRAEFIK_NET_NAME:-traefik-net}
+    driver: ${TRAEFIK_NET_DRIVER:-overlay}
     external: true
 
 volumes:
