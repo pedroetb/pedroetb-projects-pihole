@@ -25,19 +25,20 @@ services:
     extra_hosts:
       - ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - ${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - alertmanager.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - backup.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - grafana.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - motion.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - motioneye.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - mulo.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - portainer.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - prometheus.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - pushgateway.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - seafile.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - tajinaste.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - traefik.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - transmission.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - tts.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - mulo.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - prometheus.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - grafana.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - alertmanager.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - pushgateway.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
     dns:
       - 127.0.0.1
       - ${DNS1}
