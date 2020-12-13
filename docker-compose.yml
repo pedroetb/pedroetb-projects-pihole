@@ -28,6 +28,7 @@ services:
       - alertmanager.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - backup.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - grafana.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - index.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - motion.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - motioneye.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
       - mulo.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
