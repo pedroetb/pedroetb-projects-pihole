@@ -1,49 +1,56 @@
-version: '3.7'
+version: '3.9'
 
 services:
   pihole:
     image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
     environment:
       TZ:
+      ADMIN_EMAIL:
       WEBPASSWORD:
-      DNS1:
-      DNS2:
+      PIHOLE_DNS_:
       DNSMASQ_LISTENING:
+      DNSSEC:
+      DNS_BOGUS_PRIV:
+      DNS_FQDN_REQUIRED:
+      REV_SERVER:
+      REV_SERVER_DOMAIN:
+      REV_SERVER_TARGET:
+      REV_SERVER_CIDR:
+      DHCP_ACTIVE:
+      DHCP_START:
+      DHCP_END:
+      DHCP_ROUTER:
+      DHCP_LEASETIME:
+      PIHOLE_DOMAIN:
+      DHCP_IPv6:
+      DHCP_rapid_commit:
+      FTLCONF_LOCAL_IPV4:
+      FTLCONF_LOCAL_IPV6:
       VIRTUAL_HOST: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
     networks:
       traefik-net:
     ports:
       - target: ${DNS_INTERNAL_PORT}
-        published: ${DNS_PORT}
+        published: ${DNS_EXTERNAL_PORT}
         protocol: tcp
-        mode: ${PORT_MODE}
+        mode: ${DNS_PORT_MODE}
       - target: ${DNS_INTERNAL_PORT}
-        published: ${DNS_PORT}
+        published: ${DNS_EXTERNAL_PORT}
         protocol: udp
-        mode: ${PORT_MODE}
+        mode: ${DNS_PORT_MODE}
     hostname: ${TRAEFIK_SUBDOMAIN}{{.Task.Slot}}.${TRAEFIK_DOMAIN}
     extra_hosts:
-      - ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - ${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - alertmanager.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - backup.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - grafana.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - index.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - motion.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - motioneye.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - mulo.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - portainer.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - prometheus.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - pushgateway.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - seafile.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - tajinaste.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - traefik.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - transmission.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
-      - tts.${TRAEFIK_DOMAIN}:${TRAEFIK_LOCAL_IP}
+      - ${TRAEFIK_DOMAIN}:${FTLCONF_LOCAL_IPV4}
+      - ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}:${FTLCONF_LOCAL_IPV4}
     dns:
       - 127.0.0.1
-      - ${DNS1}
-      - ${DNS2}
+      - ${BACKUP_DNS_1}
+      - ${BACKUP_DNS_2}
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BIND_SERVICE
+      - SYS_NICE
     volumes:
       - pihole-vol:/etc/pihole
       - dnsmasqd-vol:/etc/dnsmasq.d
@@ -55,7 +62,7 @@ services:
         constraints:
           - ${PLACEMENT_CONSTRAINT:-node.labels.dns == 1}
       restart_policy:
-        delay: ${RESTART_DELAY:-3s}
+        delay: ${RESTART_DELAY:-1s}
       update_config:
         delay: ${UPDATE_DELAY:-1m}
       labels:
@@ -87,7 +94,7 @@ volumes:
     driver: local
     driver_opts:
       type: ${VOL_TYPE}
-      o: addr=${VOL_ADDRESS},${VOL_OPTIONS}
+      o: addr=${VOL_ADDR},${VOL_OPTS}
       device: ${PIHOLE_VOL_DEVICE:-:/pihole-vol/}
 
   dnsmasqd-vol:
@@ -95,5 +102,5 @@ volumes:
     driver: local
     driver_opts:
       type: ${VOL_TYPE}
-      o: addr=${VOL_ADDRESS},${VOL_OPTIONS}
+      o: addr=${VOL_ADDR},${VOL_OPTS}
       device: ${DNSMASQD_VOL_DEVICE:-:/dnsmasqd-vol/}
