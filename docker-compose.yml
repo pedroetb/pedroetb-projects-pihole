@@ -50,13 +50,14 @@ services:
     deploy:
       mode: replicated
       replicas: ${REPLICAS:-2}
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - ${PLACEMENT_CONSTRAINT:-node.labels.dns == 1}
       restart_policy:
         delay: ${RESTART_DELAY:-3s}
       update_config:
         delay: ${UPDATE_DELAY:-1m}
-      placement:
-        constraints:
-          - ${PLACEMENT_CONSTRAINT:-node.labels.dns == 1}
       labels:
         traefik.enable: 'true'
         traefik.http.routers.pihole.entrypoints: ${TRAEFIK_ENTRYPOINT:-https}
