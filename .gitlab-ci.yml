@@ -5,7 +5,3 @@ include:
 
 stages:
   - deploy
-
-.deploy:
-  environment:
-    url: https://${CI_PROJECT_NAME}.${DD_TRAEFIK_DOMAIN}
