@@ -46,10 +46,6 @@ services:
     extra_hosts:
       - ${TRAEFIK_DOMAIN}:${FTLCONF_LOCAL_IPV4}
       - ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}:${FTLCONF_LOCAL_IPV4}
-    dns:
-      - 127.0.0.1
-      - ${BACKUP_DNS_1}
-      - ${BACKUP_DNS_2}
     cap_add:
       - NET_ADMIN
       - NET_RAW
