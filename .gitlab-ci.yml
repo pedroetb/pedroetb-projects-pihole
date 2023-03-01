@@ -5,3 +5,7 @@ include:
 
 stages:
   - deploy
+
+.deploy:
+  environment:
+    name: standalone
