@@ -1,11 +1,10 @@
 include:
   - project: 'pedroetb-projects/gitlab-ci-templates'
     ref: master
-    file: '/deployment.yml'
+    file: '/deployment-service/lulu/docker-deploy.yml'
+  - project: 'pedroetb-projects/gitlab-ci-templates'
+    ref: master
+    file: '/deployment-service/museo/docker-deploy.yml'
 
 stages:
   - deploy
-
-.deploy:
-  environment:
-    name: standalone
