@@ -1,5 +1,7 @@
 # pihole
 
+DNS server to achieve network-wide ad blocking
+
 ## Setting local DNS records
 
 To achieve local domain names resolution, you have 3 options to add them:
