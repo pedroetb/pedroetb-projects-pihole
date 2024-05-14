@@ -82,7 +82,7 @@ volumes:
     driver: ${VOL_DRIVER}
     driver_opts:
       type: ${VOL_TYPE}
-      o: addr=${VOL_ADDR},${VOL_OPTS}
+      o: addr=${VOL_ADDR},vers=${VOL_VERS},${VOL_OPTS}
       device: ${PIHOLE_VOL_DEVICE}
 
   dnsmasqd-vol:
@@ -90,5 +90,5 @@ volumes:
     driver: ${VOL_DRIVER}
     driver_opts:
       type: ${VOL_TYPE}
-      o: addr=${VOL_ADDR},${VOL_OPTS}
+      o: addr=${VOL_ADDR},vers=${VOL_VERS},${VOL_OPTS}
       device: ${DNSMASQD_VOL_DEVICE}
