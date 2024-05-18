@@ -26,6 +26,7 @@ services:
       FTLCONF_LOCAL_IPV6:
     hostname: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
     networks:
+      pihole-net:
       traefik-net:
     ports:
       - target: ${DNS_INTERNAL_PORT}
@@ -71,6 +72,11 @@ services:
           memory: ${RESOURCES_RESERVATIONS_MEMORY:-128M}
 
 networks:
+  pihole-net:
+    name: ${PIHOLE_NET_NAME:-pihole-net}
+    driver: ${PIHOLE_NET_DRIVER:-overlay}
+    attachable: ${PIHOLE_NET_ATTACHABLE:-true}
+
   traefik-net:
     name: ${TRAEFIK_NET_NAME:-traefik-net}
     driver: ${TRAEFIK_NET_DRIVER:-overlay}
