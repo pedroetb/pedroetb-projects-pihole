@@ -16,7 +16,7 @@ services:
       REV_SERVER_CIDR:
       FTLCONF_LOCAL_IPV4:
       FTLCONF_LOCAL_IPV6:
-    hostname: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
+    hostname: ${TRAEFIK_SUBDOMAIN}${SECONDARY_SUBDOMAIN_SUFFIX}.${TRAEFIK_DOMAIN}
     networks:
       pihole-net:
       traefik-net:
@@ -48,7 +48,7 @@ services:
       labels:
         traefik.enable: ${TRAEFIK_ENABLE:-true}
         traefik.http.routers.pihole.entrypoints: ${TRAEFIK_ENTRYPOINT:-http}
-        traefik.http.routers.pihole.rule: Host(`${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}`)
+        traefik.http.routers.pihole.rule: Host(`${TRAEFIK_SUBDOMAIN}${SECONDARY_SUBDOMAIN_SUFFIX}.${TRAEFIK_DOMAIN}`)
         traefik.http.services.pihole.loadbalancer.server.port: ${DASHBOARD_PORT:-80}
       resources:
         limits:

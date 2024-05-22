@@ -61,4 +61,4 @@ It has no effect, because embedded DNS only handles Docker service discovery/res
 
 ## Secondary Pihole
 
-When deploying secondary Pihole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4`, `PLACEMENT_CONSTRAINTS_VALUE` and `TRAEFIK_SUBDOMAIN`.
+When deploying secondary Pihole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4` and `PLACEMENT_CONSTRAINTS_VALUE`.
