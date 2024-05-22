@@ -15,7 +15,7 @@ $ systemctl stop systemd-resolved
 # edit local DNS configuration adding these options
 $ vim /etc/systemd/resolved.conf
 ...
-DNS=8.8.8.8 8.8.4.4 1.1.1.1 1.0.0.1
+DNS=8.8.8.8 1.1.1.1
 DNSStubListener=no
 ...
 
