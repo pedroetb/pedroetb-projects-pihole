@@ -8,3 +8,39 @@ include:
 
 stages:
   - deploy
+
+.deploy-lulu-replica:
+  extends:
+    - .deploy-lulu
+  variables:
+    COMPOSE_FILE: compose.replica.yaml
+  environment:
+    name: lulu-replica
+
+deploy-branch-lulu-replica:
+  extends:
+    - .deploy-lulu-replica
+    - .deploy-branch
+
+deploy-tag-lulu-replica:
+  extends:
+    - .deploy-lulu-replica
+    - .deploy-tag
+
+.deploy-museo-replica:
+  extends:
+    - .deploy-museo
+  variables:
+    COMPOSE_FILE: compose.replica.yaml
+  environment:
+    name: museo-replica
+
+deploy-branch-museo-replica:
+  extends:
+    - .deploy-museo-replica
+    - .deploy-branch
+
+deploy-tag-museo-replica:
+  extends:
+    - .deploy-museo-replica
+    - .deploy-tag
