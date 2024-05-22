@@ -9,11 +9,14 @@ include:
 stages:
   - deploy
 
+.deploy-replica:
+  variables:
+    COMPOSE_FILE: compose.replica.yaml
+
 .deploy-lulu-replica:
   extends:
     - .deploy-lulu
-  variables:
-    COMPOSE_FILE: compose.replica.yaml
+    - .deploy-replica
   environment:
     name: lulu-replica
 
@@ -30,8 +33,7 @@ deploy-tag-lulu-replica:
 .deploy-museo-replica:
   extends:
     - .deploy-museo
-  variables:
-    COMPOSE_FILE: compose.replica.yaml
+    - .deploy-replica
   environment:
     name: museo-replica
 

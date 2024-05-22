@@ -1,5 +1,5 @@
 services:
-  pihole-replica:
+  pihole:
     image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
     environment:
       TZ:
