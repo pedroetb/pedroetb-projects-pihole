@@ -58,3 +58,7 @@ address=/change.me/10.0.0.123
 Note that `server=127.0.0.11` is set to Docker embedded DNS resolver, to avoid warnings from `dnsmasqd` about missing server configuration. It's only used because `127.0.0.1` address (localhost) is detected as a configuration failure too.
 
 It has no effect, because embedded DNS only handles Docker service discovery/resolution and any other DNS lookups are forwarded to DNS defined at container (or Docker daemon config at host).
+
+## Secondary Pihole
+
+When deploying secondary Pihole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4`, `PLACEMENT_CONSTRAINTS_VALUE` and `TRAEFIK_SUBDOMAIN`.

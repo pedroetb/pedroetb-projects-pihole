@@ -9,40 +9,40 @@ include:
 stages:
   - deploy
 
-.deploy-replica:
+.deploy-secondary:
   variables:
-    COMPOSE_FILE: compose.replica.yaml
+    COMPOSE_FILE: compose.secondary.yaml
 
-.deploy-lulu-replica:
+.deploy-lulu-secondary:
   extends:
     - .deploy-lulu
-    - .deploy-replica
+    - .deploy-secondary
   environment:
-    name: lulu-replica
+    name: lulu-secondary
 
-deploy-branch-lulu-replica:
+deploy-branch-lulu-secondary:
   extends:
-    - .deploy-lulu-replica
+    - .deploy-lulu-secondary
     - .deploy-branch
 
-deploy-tag-lulu-replica:
+deploy-tag-lulu-secondary:
   extends:
-    - .deploy-lulu-replica
+    - .deploy-lulu-secondary
     - .deploy-tag
 
-.deploy-museo-replica:
+.deploy-museo-secondary:
   extends:
     - .deploy-museo
-    - .deploy-replica
+    - .deploy-secondary
   environment:
-    name: museo-replica
+    name: museo-secondary
 
-deploy-branch-museo-replica:
+deploy-branch-museo-secondary:
   extends:
-    - .deploy-museo-replica
+    - .deploy-museo-secondary
     - .deploy-branch
 
-deploy-tag-museo-replica:
+deploy-tag-museo-secondary:
   extends:
-    - .deploy-museo-replica
+    - .deploy-museo-secondary
     - .deploy-tag
