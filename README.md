@@ -1,5 +1,39 @@
 # pihole
 
+DNS server to achieve network-wide ad blocking
+
+## Allow port usage from host
+
+You may have to prepare host system first in order to bind DNS and DHCP ports to Pi-hole.
+
+Tipically, you will need to configure `systemd-resolved.service`, disabling DNS stub listener and setting some public DNS servers:
+
+```sh
+# stop local DNS service
+$ systemctl stop systemd-resolved
+
+# edit local DNS configuration adding these options
+$ vim /etc/systemd/resolved.conf
+...
+DNS=8.8.8.8 1.1.1.1
+DNSStubListener=no
+...
+
+# symlink /etc/resolv.conf file
+$ ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+# start local DNS service again
+$ systemctl start systemd-resolved
+```
+
+Maybe you will need to disable `lxc-net.service` too:
+
+```sh
+systemctl stop lxc-net.service
+systemctl disable lxc-net.service
+systemctl mask lxc-net.service
+```
+
 ## Setting local DNS records
 
 To achieve local domain names resolution, you have 3 options to add them:

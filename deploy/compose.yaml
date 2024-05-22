@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   pihole:
     image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
@@ -26,8 +24,9 @@ services:
       DHCP_rapid_commit:
       FTLCONF_LOCAL_IPV4:
       FTLCONF_LOCAL_IPV6:
-      VIRTUAL_HOST: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
+    hostname: ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}
     networks:
+      pihole-net:
       traefik-net:
     ports:
       - target: ${DNS_INTERNAL_PORT}
@@ -42,10 +41,6 @@ services:
         published: ${DHCP_EXTERNAL_PORT}
         protocol: udp
         mode: ${DHCP_PORT_MODE}
-    hostname: ${TRAEFIK_SUBDOMAIN}{{.Task.Slot}}.${TRAEFIK_DOMAIN}
-    extra_hosts:
-      - ${TRAEFIK_DOMAIN}:${FTLCONF_LOCAL_IPV4}
-      - ${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}:${FTLCONF_LOCAL_IPV4}
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -57,32 +52,31 @@ services:
       - dnsmasqd-vol:/etc/dnsmasq.d
     deploy:
       mode: replicated
-      replicas: ${REPLICAS:-2}
+      replicas: 1
       placement:
-        max_replicas_per_node: 1
         constraints:
-          - node.labels.${PLACEMENT_CONSTRAINTS_NODE_LABELS_NAME} == ${PLACEMENT_CONSTRAINTS_NODE_LABELS_VALUE}
+          - ${PLACEMENT_CONSTRAINTS_NAME:-node.hostname} ${PLACEMENT_CONSTRAINTS_OPERATOR:-==} ${PLACEMENT_CONSTRAINTS_VALUE:-node}
       restart_policy:
         delay: ${RESTART_DELAY:-1s}
-      update_config:
-        delay: ${UPDATE_DELAY:-1m}
       labels:
         traefik.enable: ${TRAEFIK_ENABLE:-true}
         traefik.http.routers.pihole.entrypoints: ${TRAEFIK_ENTRYPOINT:-https}
         traefik.http.routers.pihole.rule: Host(`${TRAEFIK_SUBDOMAIN}.${TRAEFIK_DOMAIN}`)
-        traefik.http.middlewares.pihole-add-prefix.addprefix.prefix: ${DASHBOARD_PREFIX:-/admin}
-        traefik.http.routers.pihole.middlewares: pihole-add-prefix
         traefik.http.services.pihole.loadbalancer.server.port: ${DASHBOARD_PORT:-80}
-        traefik.http.services.pihole.loadbalancer.sticky.cookie.name: ${TRAEFIK_COOKIE_NAME:-sticky}
       resources:
         limits:
           cpus: '${RESOURCES_LIMITS_CPUS:-1}'
-          memory: ${RESOURCES_LIMITS_MEMORY:-128M}
+          memory: ${RESOURCES_LIMITS_MEMORY:-512M}
         reservations:
-          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
-          memory: ${RESOURCES_RESERVATIONS_MEMORY:-64M}
+          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.01}'
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-128M}
 
 networks:
+  pihole-net:
+    name: ${PIHOLE_NET_NAME:-pihole-net}
+    driver: ${PIHOLE_NET_DRIVER:-overlay}
+    attachable: ${PIHOLE_NET_ATTACHABLE:-true}
+
   traefik-net:
     name: ${TRAEFIK_NET_NAME:-traefik-net}
     driver: ${TRAEFIK_NET_DRIVER:-overlay}
@@ -91,16 +85,16 @@ networks:
 volumes:
   pihole-vol:
     name: ${PIHOLE_VOL_NAME}
-    driver: local
+    driver: ${VOL_DRIVER}
     driver_opts:
       type: ${VOL_TYPE}
-      o: addr=${VOL_ADDR},${VOL_OPTS}
+      o: addr=${VOL_ADDR},vers=${VOL_VERS},${VOL_OPTS}
       device: ${PIHOLE_VOL_DEVICE}
 
   dnsmasqd-vol:
-    name: ${DNSMASQD_VOL_NAME:-dnsmasqd-vol}
-    driver: local
+    name: ${DNSMASQD_VOL_NAME}
+    driver: ${VOL_DRIVER}
     driver_opts:
       type: ${VOL_TYPE}
-      o: addr=${VOL_ADDR},${VOL_OPTS}
-      device: ${DNSMASQD_VOL_DEVICE:-:/dnsmasqd-vol/}
+      o: addr=${VOL_ADDR},vers=${VOL_VERS},${VOL_OPTS}
+      device: ${DNSMASQD_VOL_DEVICE}
