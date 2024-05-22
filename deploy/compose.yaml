@@ -86,15 +86,7 @@ volumes:
   pihole-vol:
     name: ${PIHOLE_VOL_NAME}
     driver: ${VOL_DRIVER}
-    driver_opts:
-      type: ${VOL_TYPE}
-      o: addr=${VOL_ADDR},vers=${VOL_VERS},${VOL_OPTS}
-      device: ${PIHOLE_VOL_DEVICE}
 
   dnsmasqd-vol:
     name: ${DNSMASQD_VOL_NAME}
     driver: ${VOL_DRIVER}
-    driver_opts:
-      type: ${VOL_TYPE}
-      o: addr=${VOL_ADDR},vers=${VOL_VERS},${VOL_OPTS}
-      device: ${DNSMASQD_VOL_DEVICE}
