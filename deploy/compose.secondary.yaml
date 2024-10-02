@@ -1,10 +1,11 @@
 services:
-  pihole:
+  pihole-secondary:
     image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
     environment:
       TZ:
       ADMIN_EMAIL:
       WEBPASSWORD:
+      WEB_PORT:
       PIHOLE_DNS_:
       DNSMASQ_LISTENING:
       DNSSEC:
@@ -41,22 +42,23 @@ services:
       mode: replicated
       replicas: 1
       placement:
+        max_replicas_per_node: 1
         constraints:
           - ${PLACEMENT_CONSTRAINTS_NAME:-node.hostname} ${PLACEMENT_CONSTRAINTS_OPERATOR:-==} ${PLACEMENT_CONSTRAINTS_VALUE:-node}
       restart_policy:
         delay: ${RESTART_DELAY:-1s}
       labels:
-        traefik.enable: ${TRAEFIK_ENABLE:-true}
-        traefik.http.routers.pihole.entrypoints: ${TRAEFIK_ENTRYPOINT:-http}
-        traefik.http.routers.pihole.rule: Host(`${TRAEFIK_SUBDOMAIN}${SECONDARY_SUBDOMAIN_SUFFIX}.${TRAEFIK_DOMAIN}`)
-        traefik.http.services.pihole.loadbalancer.server.port: ${DASHBOARD_PORT:-80}
+        traefik.enable: ${TRAEFIK_ENABLE}
+        traefik.http.routers.pihole-secondary.entrypoints: ${TRAEFIK_ENTRYPOINT:-http}
+        traefik.http.routers.pihole-secondary.rule: Host(`${TRAEFIK_SUBDOMAIN}${SECONDARY_SUBDOMAIN_SUFFIX}.${TRAEFIK_DOMAIN}`)
+        traefik.http.services.pihole-secondary.loadbalancer.server.port: ${WEB_PORT}
       resources:
         limits:
           cpus: '${RESOURCES_LIMITS_CPUS:-1}'
           memory: ${RESOURCES_LIMITS_MEMORY:-512M}
         reservations:
           cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.01}'
-          memory: ${RESOURCES_RESERVATIONS_MEMORY:-128M}
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-256M}
 
 networks:
   pihole-net:

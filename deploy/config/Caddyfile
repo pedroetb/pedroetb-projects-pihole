@@ -1,0 +1,14 @@
+{
+	admin off
+	auto_https off
+	log {
+		format console {
+			time_format iso8601
+		}
+	}
+}
+
+:{$CADDY_PORT} {
+	reverse_proxy {$BACKEND_ADDR}
+	respond /health "OK" 200
+}
