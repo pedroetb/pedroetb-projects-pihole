@@ -1,81 +1,8 @@
+include:
+  - compose.common-toplevel.yaml
+
 services:
   pihole-secondary:
-    image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
-    environment:
-      TZ:
-      ADMIN_EMAIL:
-      WEBPASSWORD:
-      WEB_PORT:
-      PIHOLE_DNS_:
-      DNSMASQ_LISTENING:
-      DNSSEC:
-      DNS_BOGUS_PRIV:
-      DNS_FQDN_REQUIRED:
-      REV_SERVER:
-      REV_SERVER_DOMAIN:
-      REV_SERVER_TARGET:
-      REV_SERVER_CIDR:
-      FTLCONF_LOCAL_IPV4:
-      FTLCONF_LOCAL_IPV6:
-    hostname: ${TRAEFIK_SUBDOMAIN}${SECONDARY_SUBDOMAIN_SUFFIX}.${TRAEFIK_DOMAIN}
-    networks:
-      pihole-net:
-      traefik-net:
-    ports:
-      - target: ${DNS_INTERNAL_PORT}
-        published: ${DNS_EXTERNAL_PORT}
-        protocol: tcp
-        mode: ${DNS_PORT_MODE}
-      - target: ${DNS_INTERNAL_PORT}
-        published: ${DNS_EXTERNAL_PORT}
-        protocol: udp
-        mode: ${DNS_PORT_MODE}
-    cap_add:
-      - NET_RAW
-      - NET_BIND_SERVICE
-      - SYS_NICE
-      - CHOWN
-    volumes:
-      - pihole-vol:/etc/pihole
-      - dnsmasqd-vol:/etc/dnsmasq.d
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        max_replicas_per_node: 1
-        constraints:
-          - ${PLACEMENT_CONSTRAINTS_NAME:-node.hostname} ${PLACEMENT_CONSTRAINTS_OPERATOR:-==} ${PLACEMENT_CONSTRAINTS_VALUE:-node}
-      restart_policy:
-        delay: ${RESTART_DELAY:-1s}
-      labels:
-        traefik.enable: ${TRAEFIK_ENABLE}
-        traefik.http.routers.pihole-secondary.entrypoints: ${TRAEFIK_ENTRYPOINT:-http}
-        traefik.http.routers.pihole-secondary.rule: Host(`${TRAEFIK_SUBDOMAIN}${SECONDARY_SUBDOMAIN_SUFFIX}.${TRAEFIK_DOMAIN}`)
-        traefik.http.services.pihole-secondary.loadbalancer.server.port: ${WEB_PORT}
-      resources:
-        limits:
-          cpus: '${RESOURCES_LIMITS_CPUS:-1}'
-          memory: ${RESOURCES_LIMITS_MEMORY:-512M}
-        reservations:
-          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.01}'
-          memory: ${RESOURCES_RESERVATIONS_MEMORY:-256M}
-
-networks:
-  pihole-net:
-    name: ${PIHOLE_NET_NAME:-pihole-net}
-    driver: ${PIHOLE_NET_DRIVER:-overlay}
-    attachable: ${PIHOLE_NET_ATTACHABLE:-true}
-
-  traefik-net:
-    name: ${TRAEFIK_NET_NAME:-traefik-net}
-    driver: ${TRAEFIK_NET_DRIVER:-overlay}
-    external: true
-
-volumes:
-  pihole-vol:
-    name: ${PIHOLE_VOL_NAME}
-    driver: ${VOL_DRIVER}
-
-  dnsmasqd-vol:
-    name: ${DNSMASQD_VOL_NAME}
-    driver: ${VOL_DRIVER}
+    extends:
+      file: compose.common-service.yaml
+      service: pihole

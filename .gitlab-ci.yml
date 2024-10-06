@@ -13,6 +13,7 @@ stages:
   variables:
     COMPOSE_FILE: compose.secondary.yaml
 
+
 .deploy-lulu-secondary:
   extends:
     - .deploy-lulu
@@ -29,6 +30,7 @@ deploy-tag-lulu-secondary:
   extends:
     - .deploy-lulu-secondary
     - .deploy-tag
+
 
 .deploy-museo-secondary:
   extends:

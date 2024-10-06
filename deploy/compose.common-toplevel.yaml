@@ -1,0 +1,14 @@
+networks:
+  host-net:
+    name: ${HOST_NET_NAME:-host}
+    driver: ${HOST_NET_DRIVER:-host}
+    external: true
+
+volumes:
+  pihole-vol:
+    name: ${PIHOLE_VOL_NAME}
+    driver: ${VOL_DRIVER}
+
+  dnsmasqd-vol:
+    name: ${DNSMASQD_VOL_NAME}
+    driver: ${VOL_DRIVER}
