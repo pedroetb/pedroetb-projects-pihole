@@ -6,3 +6,4 @@ services:
     extends:
       file: compose.common-service.yaml
       service: pihole
+    container_name: ${CONTAINER_NAME:-pihole-secondary}

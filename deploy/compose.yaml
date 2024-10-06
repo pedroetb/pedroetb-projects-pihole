@@ -6,6 +6,7 @@ services:
     extends:
       file: compose.common-service.yaml
       service: pihole
+    container_name: ${CONTAINER_NAME:-pihole-primary}
     environment:
       DHCP_ACTIVE:
       DHCP_START:
