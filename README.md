@@ -2,7 +2,31 @@
 
 DNS server to achieve network-wide ad blocking
 
-## Allow port usage from host
+## Services available
+
+This project is designed to deploy 2 different Docker Compose services: `pihole-primary` and `pihole-secondary`.
+
+Two different services are needed because they will be deployed to different hosts (to avoid DNS service downtimes) and offer different features.
+
+Both are responsible for providing DNS resolution with ad blocking to local clients. They also offer a web admin panel, exposed via `traefik` using `caddy` reverse-proxy service. This proxy is defined at its own project: [pedroetb-projects/pihole-proxy](https://gitlab.com/pedroetb-projects/pihole-proxy).
+
+### pihole-primary
+
+This service is the main DNS resolution provider. It also offers a DHCP server (disabled by default).
+
+If you enable DHCP server, don't forget to:
+- disable any other DHCP servers (at your home router, tpically).
+- define a static IP address for your host (because it cannot depend on DHCP server provided by itself).
+
+### pihole-secondary
+
+This service is the backup DNS resolution provider. It doesn't offer a DHCP server to avoid collision with primary service.
+
+When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4` and `PLACEMENT_CONSTRAINTS_VALUE`.
+
+## Configuration
+
+### Allow port usage from host
 
 You may have to prepare host system first in order to bind DNS and DHCP ports to Pi-hole.
 
@@ -34,7 +58,7 @@ systemctl disable lxc-net.service
 systemctl mask lxc-net.service
 ```
 
-## Setting local DNS records
+### Setting local DNS records
 
 To achieve local domain names resolution, you have 3 options to add them:
 
@@ -46,7 +70,7 @@ This is the precedence order to apply too, only the first record found will trig
 
 My personal preference was 3, but now I'm using 1, because allows to only define main domain (no need to specify any new subdomains).
 
-### DNSMasq conf file example
+#### DNSMasq conf file example
 
 This configuration file, named `99-custom.conf` (for example) and stored at **dnsmasqd-vol** (`/etc/dnsmasq.d/99-custom.conf`), is enough for local domain names resolution for `change.me` and subdomains, associated to `10.0.0.123` IP address.
 
@@ -59,6 +83,12 @@ Note that `server=127.0.0.11` is set to Docker embedded DNS resolver, to avoid w
 
 It has no effect, because embedded DNS only handles Docker service discovery/resolution and any other DNS lookups are forwarded to DNS defined at container (or Docker daemon config at host).
 
-## Secondary Pihole
+### DHCP
 
-When deploying secondary Pihole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4` and `PLACEMENT_CONSTRAINTS_VALUE`.
+Once you setup DHCP server at `pihole-primary` service, you should set custom configuration at `/etc/dnsmasq.d/99-custom.conf` (for example) to inform your clients which DNS providers can use for resolution.
+
+These providers must be pointing to addresses of hosts where both Pi-hole services are running (by default, will report only IP of `pihole-primary` service host). For example, if your IPs are `10.0.0.123` and `10.0.0.124`:
+
+```sh
+dhcp-option=6,10.0.0.123,10.0.0.124
+```
