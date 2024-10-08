@@ -1,0 +1,33 @@
+services:
+  pihole:
+    image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
+    environment:
+      TZ:
+      ADMIN_EMAIL:
+      WEBPASSWORD:
+      WEB_PORT:
+      FTLCONF_LOCAL_IPV4:
+      FTLCONF_LOCAL_IPV6:
+      IPv6:
+      PIHOLE_DNS_:
+      DNSMASQ_LISTENING:
+      DNSSEC:
+      DNS_BOGUS_PRIV:
+      DNS_FQDN_REQUIRED:
+      REV_SERVER:
+      REV_SERVER_DOMAIN:
+      REV_SERVER_TARGET:
+      REV_SERVER_CIDR:
+    network_mode: host
+    volumes:
+      - pihole-vol:/etc/pihole
+      - dnsmasqd-vol:/etc/dnsmasq.d
+    cap_add:
+      - NET_RAW
+      - NET_BIND_SERVICE
+      - SYS_NICE
+      - CHOWN
+    restart: always
+    cpus: '${CPUS:-1}'
+    mem_limit: ${MEM_LIMIT:-512M}
+    mem_reservation: ${MEM_RESERVATION:-256M}

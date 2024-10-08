@@ -9,9 +9,16 @@ include:
 stages:
   - deploy
 
+.deploy:
+  variables:
+    FORCE_DOCKER_COMPOSE: 1
+    SERVICES_TO_CHECK: pihole-primary
+
 .deploy-secondary:
   variables:
     COMPOSE_FILE: compose.secondary.yaml
+    SERVICES_TO_CHECK: pihole-secondary
+
 
 .deploy-lulu-secondary:
   extends:
@@ -29,6 +36,7 @@ deploy-tag-lulu-secondary:
   extends:
     - .deploy-lulu-secondary
     - .deploy-tag
+
 
 .deploy-museo-secondary:
   extends:

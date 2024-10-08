@@ -1,0 +1,8 @@
+volumes:
+  pihole-vol:
+    name: ${PIHOLE_VOL_NAME}
+    driver: ${VOL_DRIVER}
+
+  dnsmasqd-vol:
+    name: ${DNSMASQD_VOL_NAME}
+    driver: ${VOL_DRIVER}
