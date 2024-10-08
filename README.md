@@ -15,6 +15,7 @@ Both are responsible for providing DNS resolution with ad blocking to local clie
 This service is the main DNS resolution provider. It also offers a DHCP server (disabled by default).
 
 If you enable DHCP server, don't forget to:
+
 - disable any other DHCP servers (at your home router, tpically).
 - define a static IP address for your host (because it cannot depend on DHCP server provided by itself).
 
@@ -25,6 +26,44 @@ This service is the backup DNS resolution provider. It doesn't offer a DHCP serv
 When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4` and `PLACEMENT_CONSTRAINTS_VALUE`.
 
 ## Configuration
+
+### Variables
+
+You may define these environment variables for both services (**bold** are mandatory):
+
+| Variable name | Default value |
+| - | - |
+| **TZ** | `Atlantic/Canary` |
+| **ADMIN_EMAIL** | `info@change.me` |
+| **WEBPASSWORD** | `changeme` |
+| *WEB_PORT* | `8080` |
+| **FTLCONF_LOCAL_IPV4** | `127.0.0.1` |
+| *FTLCONF_LOCAL_IPV6* | `::1` |
+| *IPv6* | `true` |
+| *PIHOLE_DNS_* | `8.8.8.8;1.1.1.1;8.8.4.4;1.0.0.1` |
+| *DNSMASQ_LISTENING* | `all` |
+| *DNSSEC* | `false` |
+| *DNS_BOGUS_PRIV* | `false` |
+| *DNS_FQDN_REQUIRED* | `false` |
+| *REV_SERVER* | `true` |
+| *REV_SERVER_DOMAIN* | `local` |
+| *REV_SERVER_TARGET* | `10.0.0.1` |
+| *REV_SERVER_CIDR* | `10.0.0.0/8` |
+
+Only for `pihole-primary` service, you may define these environment variables:
+
+| Variable name | Default value |
+| - | - |
+| *DHCP_ACTIVE* | `false` |
+| *DHCP_START* | `10.0.0.2` |
+| *DHCP_END* | `10.255.255.254` |
+| *DHCP_ROUTER* | `10.0.0.1` |
+| *DHCP_LEASETIME* | `24` |
+| *PIHOLE_DOMAIN* | `local` |
+| *DHCP_IPv6* | `true` |
+| *DHCP_rapid_commit* | `true` |
+
+> :bulb: There is also other environment variables used at compose files, but not propagated to deployed services. Check `deploy/compose*.yaml` files to inspect them.
 
 ### Allow port usage from host
 
