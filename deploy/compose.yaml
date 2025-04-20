@@ -20,4 +20,5 @@ services:
       - 127.0.0.1
       - ${BACKUP_DNS:-8.8.8.8}
     cap_add:
+      - NET_RAW
       - NET_ADMIN
