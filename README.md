@@ -23,7 +23,7 @@ If you enable DHCP server, don't forget to:
 
 This service is the backup DNS resolution provider. It doesn't offer a DHCP server to avoid collision with primary service.
 
-When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4` and `PLACEMENT_CONSTRAINTS_VALUE`.
+When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_dns_reply_host_IPv4` and maybe `FTLCONF_dns_revServers` (if using DHCP at primary service).
 
 ## Configuration
 
@@ -34,34 +34,31 @@ You may define these environment variables for both services (**bold** are manda
 | Variable name | Default value |
 | - | - |
 | **TZ** | `Atlantic/Canary` |
-| **ADMIN_EMAIL** | `info@change.me` |
-| **WEBPASSWORD** | `changeme` |
-| *WEB_PORT* | `8080` |
-| **FTLCONF_LOCAL_IPV4** | `127.0.0.1` |
-| *FTLCONF_LOCAL_IPV6* | `::1` |
-| *IPv6* | `true` |
-| *PIHOLE_DNS_* | `8.8.8.8;1.1.1.1;8.8.4.4;1.0.0.1` |
-| *DNSMASQ_LISTENING* | `all` |
-| *DNSSEC* | `false` |
-| *DNS_BOGUS_PRIV* | `false` |
-| *DNS_FQDN_REQUIRED* | `false` |
-| *REV_SERVER* | `true` |
-| *REV_SERVER_DOMAIN* | `local` |
-| *REV_SERVER_TARGET* | `10.0.0.1` |
-| *REV_SERVER_CIDR* | `10.0.0.0/8` |
+| *TAIL_FTL_LOG* | `1` |
+| **FTLCONF_webserver_api_password** | `changeme` |
+| *FTLCONF_webserver_port* | `8080` |
+| *FTLCONF_misc_etc_dnsmasq_d* | `true` |
+| **FTLCONF_dns_reply_host_IPv4** | `127.0.0.1` |
+| *FTLCONF_dns_reply_host_IPv6* | `::1` |
+| *FTLCONF_dns_upstreams* | `8.8.8.8;1.1.1.1;8.8.4.4;1.0.0.1` |
+| *FTLCONF_dns_listeningMode* | `all` |
+| *FTLCONF_dns_dnssec* | `false` |
+| *FTLCONF_dns_bogusPriv* | `false` |
+| *FTLCONF_dns_domainNeeded* | `false` |
+| *FTLCONF_dns_revServers* | `true,10.0.0.0/8,10.0.0.1,local` |
 
 Only for `pihole-primary` service, you may define these environment variables:
 
 | Variable name | Default value |
 | - | - |
-| *DHCP_ACTIVE* | `false` |
-| *DHCP_START* | `10.0.0.2` |
-| *DHCP_END* | `10.255.255.254` |
-| *DHCP_ROUTER* | `10.0.0.1` |
-| *DHCP_LEASETIME* | `24` |
-| *PIHOLE_DOMAIN* | `local` |
-| *DHCP_IPv6* | `true` |
-| *DHCP_rapid_commit* | `true` |
+| *FTLCONF_dhcp_active* | `false` |
+| *FTLCONF_dhcp_start* | `10.0.0.2` |
+| *FTLCONF_dhcp_end* | `10.255.255.254` |
+| *FTLCONF_dhcp_router* | `10.0.0.1` |
+| *FTLCONF_dhcp_leaseTime* | `24` |
+| *FTLCONF_dns_domain* | `local` |
+| *FTLCONF_dhcp_ipv6* | `true` |
+| *FTLCONF_dhcp_rapidCommit* | `true` |
 
 > :bulb: There is also other environment variables used at compose files, but not propagated to deployed services. Check `deploy/compose*.yaml` files to inspect them.
 
