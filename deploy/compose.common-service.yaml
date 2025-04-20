@@ -3,7 +3,6 @@ services:
     image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
     environment:
       TZ:
-      ADMIN_EMAIL:
       WEBPASSWORD:
       WEB_PORT:
       FTLCONF_LOCAL_IPV4:
