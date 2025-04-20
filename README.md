@@ -23,7 +23,7 @@ If you enable DHCP server, don't forget to:
 
 This service is the backup DNS resolution provider. It doesn't offer a DHCP server to avoid collision with primary service.
 
-When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4` and `PLACEMENT_CONSTRAINTS_VALUE`.
+When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_LOCAL_IPV4` and maybe `REV_SERVER_TARGET` (if using DHCP at primary service).
 
 ## Configuration
 
@@ -34,7 +34,6 @@ You may define these environment variables for both services (**bold** are manda
 | Variable name | Default value |
 | - | - |
 | **TZ** | `Atlantic/Canary` |
-| **ADMIN_EMAIL** | `info@change.me` |
 | **WEBPASSWORD** | `changeme` |
 | *WEB_PORT* | `8080` |
 | **FTLCONF_LOCAL_IPV4** | `127.0.0.1` |
