@@ -11,6 +11,7 @@ services:
       FTLCONF_dns_reply_host_IPv4:
       FTLCONF_dns_reply_host_IPv6:
       FTLCONF_dns_upstreams:
+      FTLCONF_dns_interface:
       FTLCONF_dns_listeningMode:
       FTLCONF_dns_ignoreLocalhost:
       FTLCONF_dns_expandHosts:

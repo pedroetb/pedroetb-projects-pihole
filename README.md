@@ -42,7 +42,8 @@ You may define these environment variables for both services (**bold** are manda
 | **FTLCONF_dns_reply_host_IPv4** | `127.0.0.1` |
 | *FTLCONF_dns_reply_host_IPv6* | `<empty>` |
 | *FTLCONF_dns_upstreams* | `8.8.8.8;1.1.1.1;8.8.4.4;1.0.0.1` |
-| *FTLCONF_dns_listeningMode* | `all` |
+| *FTLCONF_dns_interface* | `eth0` |
+| *FTLCONF_dns_listeningMode* | `local` |
 | *FTLCONF_dns_ignoreLocalhost* | `false` |
 | *FTLCONF_dns_expandHosts* | `false` |
 | *FTLCONF_dns_dnssec* | `true` |
