@@ -23,7 +23,7 @@ If you enable DHCP server, don't forget to:
 
 This service is the backup DNS resolution provider. It doesn't offer a DHCP server to avoid collision with primary service.
 
-When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_dns_reply_host_IPv4` and maybe `FTLCONF_dns_revServers` (if using DHCP at primary service).
+When deploying secondary Pi-hole service, don't forget to set variables for this environment, specially `FTLCONF_dns_reply_host_IPv4` and, if using DHCP at primary service, `FTLCONF_dns_revServers`.
 
 ## Configuration
 
@@ -37,14 +37,17 @@ You may define these environment variables for both services (**bold** are manda
 | *TAIL_FTL_LOG* | `1` |
 | **FTLCONF_webserver_api_password** | `changeme` |
 | *FTLCONF_webserver_port* | `8080` |
-| *FTLCONF_misc_etc_dnsmasq_d* | `true` |
+| *FTLCONF_misc_etc_dnsmasq_d* | `false` |
+| *FTLCONF_misc_dnsmasq_lines* | `<empty>` |
 | **FTLCONF_dns_reply_host_IPv4** | `127.0.0.1` |
-| *FTLCONF_dns_reply_host_IPv6* | `::1` |
+| *FTLCONF_dns_reply_host_IPv6* | `<empty>` |
 | *FTLCONF_dns_upstreams* | `8.8.8.8;1.1.1.1;8.8.4.4;1.0.0.1` |
 | *FTLCONF_dns_listeningMode* | `all` |
-| *FTLCONF_dns_dnssec* | `false` |
-| *FTLCONF_dns_bogusPriv* | `false` |
-| *FTLCONF_dns_domainNeeded* | `false` |
+| *FTLCONF_dns_ignoreLocalhost* | `false` |
+| *FTLCONF_dns_expandHosts* | `false` |
+| *FTLCONF_dns_dnssec* | `true` |
+| *FTLCONF_dns_bogusPriv* | `true` |
+| *FTLCONF_dns_domainNeeded* | `true` |
 | *FTLCONF_dns_revServers* | `true,10.0.0.0/8,10.0.0.1,local` |
 
 Only for `pihole-primary` service, you may define these environment variables:
@@ -55,10 +58,12 @@ Only for `pihole-primary` service, you may define these environment variables:
 | *FTLCONF_dhcp_start* | `10.0.0.2` |
 | *FTLCONF_dhcp_end* | `10.255.255.254` |
 | *FTLCONF_dhcp_router* | `10.0.0.1` |
-| *FTLCONF_dhcp_leaseTime* | `24` |
+| *FTLCONF_dhcp_leaseTime* | `1d` |
 | *FTLCONF_dns_domain* | `local` |
-| *FTLCONF_dhcp_ipv6* | `true` |
+| *FTLCONF_dhcp_ipv6* | `false` |
 | *FTLCONF_dhcp_rapidCommit* | `true` |
+| *FTLCONF_dhcp_multiDNS* | `true` |
+| *FTLCONF_dhcp_ignoreUnknownClients* | `false` |
 
 > :bulb: There is also other environment variables used at compose files, but not propagated to deployed services. Check `deploy/compose*.yaml` files to inspect them.
 
@@ -100,11 +105,9 @@ To achieve local domain names resolution, you have 3 options to add them:
 
 1. At a `.conf` file in `/etc/dnsmasq.d/` (inside Docker volume). Check [conf file example](#dnsmasq-conf-file-example).
 2. To container's `/etc/hosts` file (using `extra_hosts` for Docker Compose or `--add-host` for Docker CLI).
-3. From admin webpage utility (`Local DNS -> DNS Records`), which store them in `/etc/pihole/custom.list` (inside Docker volume).
+3. **[Recommended]** From admin webpage utility (`Settings -> Local DNS Records`), which now allow to define CNAME records too.
 
 This is the precedence order to apply too, only the first record found will trigger an address-to-name association.
-
-My personal preference was 3, but now I'm using 1, because allows to only define main domain (no need to specify any new subdomains).
 
 #### DNSMasq conf file example
 
@@ -121,9 +124,15 @@ It has no effect, because embedded DNS only handles Docker service discovery/res
 
 ### DHCP
 
-Once you setup DHCP server at `pihole-primary` service, you should set custom configuration at `/etc/dnsmasq.d/99-custom.conf` (for example) to inform your clients which DNS providers can use for resolution.
+Once you setup DHCP server at `pihole-primary` service, you should set custom configuration using `FTLCONF_misc_dnsmasq_lines` environment variable or `/etc/dnsmasq.d/99-custom.conf` file (for example), to inform your clients which DNS providers can use for resolution.
 
-These providers must be pointing to addresses of hosts where both Pi-hole services are running (by default, will report only IP of `pihole-primary` service host). For example, if your IPs are `10.0.0.123` and `10.0.0.124`:
+These providers must be pointing to addresses of hosts where both Pi-hole services are running (by default, will report only IP of `pihole-primary` service host). For example, if your Pi-hole IPs are `10.0.0.123` and `10.0.0.124`:
+
+```sh
+FTLCONF_misc_dnsmasq_lines=dhcp-option=6,10.0.0.123,10.0.0.124
+```
+
+or (as config file content)
 
 ```sh
 dhcp-option=6,10.0.0.123,10.0.0.124

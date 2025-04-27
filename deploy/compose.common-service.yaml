@@ -7,10 +7,13 @@ services:
       FTLCONF_webserver_api_password:
       FTLCONF_webserver_port:
       FTLCONF_misc_etc_dnsmasq_d:
+      FTLCONF_misc_dnsmasq_lines:
       FTLCONF_dns_reply_host_IPv4:
       FTLCONF_dns_reply_host_IPv6:
       FTLCONF_dns_upstreams:
       FTLCONF_dns_listeningMode:
+      FTLCONF_dns_ignoreLocalhost:
+      FTLCONF_dns_expandHosts:
       FTLCONF_dns_dnssec:
       FTLCONF_dns_bogusPriv:
       FTLCONF_dns_domainNeeded:
