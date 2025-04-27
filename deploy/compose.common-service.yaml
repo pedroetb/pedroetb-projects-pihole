@@ -3,20 +3,22 @@ services:
     image: ${IMAGE_NAME:-pihole/pihole}:${IMAGE_TAG:-latest}
     environment:
       TZ:
-      WEBPASSWORD:
-      WEB_PORT:
-      FTLCONF_LOCAL_IPV4:
-      FTLCONF_LOCAL_IPV6:
-      IPv6:
-      PIHOLE_DNS_:
-      DNSMASQ_LISTENING:
-      DNSSEC:
-      DNS_BOGUS_PRIV:
-      DNS_FQDN_REQUIRED:
-      REV_SERVER:
-      REV_SERVER_DOMAIN:
-      REV_SERVER_TARGET:
-      REV_SERVER_CIDR:
+      TAIL_FTL_LOG:
+      FTLCONF_webserver_api_password:
+      FTLCONF_webserver_port:
+      FTLCONF_misc_etc_dnsmasq_d:
+      FTLCONF_misc_dnsmasq_lines:
+      FTLCONF_dns_reply_host_IPv4:
+      FTLCONF_dns_reply_host_IPv6:
+      FTLCONF_dns_upstreams:
+      FTLCONF_dns_interface:
+      FTLCONF_dns_listeningMode:
+      FTLCONF_dns_ignoreLocalhost:
+      FTLCONF_dns_expandHosts:
+      FTLCONF_dns_dnssec:
+      FTLCONF_dns_bogusPriv:
+      FTLCONF_dns_domainNeeded:
+      FTLCONF_dns_revServers:
     network_mode: host
     volumes:
       - pihole-vol:/etc/pihole
@@ -24,6 +26,7 @@ services:
     cap_add:
       - NET_BIND_SERVICE
       - SYS_NICE
+      - SYS_TIME
       - CHOWN
     restart: always
     cpus: '${CPUS:-1}'
