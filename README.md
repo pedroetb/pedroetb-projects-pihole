@@ -63,7 +63,7 @@ Only for `pihole-primary` service, you may define these environment variables:
 | *FTLCONF_dns_domain* | `local` |
 | *FTLCONF_dhcp_ipv6* | `false` |
 | *FTLCONF_dhcp_rapidCommit* | `true` |
-| *FTLCONF_dhcp_multiDNS* | `true` |
+| *FTLCONF_dhcp_multiDNS* | `false` |
 | *FTLCONF_dhcp_ignoreUnknownClients* | `false` |
 
 > :bulb: There is also other environment variables used at compose files, but not propagated to deployed services. Check `deploy/compose*.yaml` files to inspect them.
@@ -130,11 +130,13 @@ Once you setup DHCP server at `pihole-primary` service, you should set custom co
 These providers must be pointing to addresses of hosts where both Pi-hole services are running (by default, will report only IP of `pihole-primary` service host). For example, if your Pi-hole IPs are `10.0.0.123` and `10.0.0.124`:
 
 ```sh
-FTLCONF_misc_dnsmasq_lines=dhcp-option=6,10.0.0.123,10.0.0.124
+FTLCONF_misc_dnsmasq_lines=dhcp-option=option:dns-server,10.0.0.123,10.0.0.124
 ```
 
 or (as config file content)
 
 ```sh
-dhcp-option=6,10.0.0.123,10.0.0.124
+dhcp-option=option:dns-server,10.0.0.123,10.0.0.124
 ```
+
+> Note: `dhcp-option=option:dns-server` is the human-readable version of `dhcp-option=6`, both are the same.
